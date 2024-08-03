@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:remote_kitchen/model/news_repository.dart';
-
 import '../model/news_model.dart';
 
 class StoryController extends GetxController {
@@ -37,13 +36,27 @@ class StoryController extends GetxController {
     }
   }
 
+  void fetchComments(Story story) async {
+    isLoading(true);
+    for (var commentId in story.kids) {
+      final comment = await _repository.fetchStoryDetails(commentId);
+      if (comment != null) {
+        story.comments.add(comment);
+        if (comment.kids.isNotEmpty) {
+          fetchComments(comment);
+        }
+      }
+    }
+    isLoading(false);
+  }
+
   void searchNews(String query) {
     if (query.isEmpty) {
       filteredNews.assignAll(storiesDetails.values.toList());
     } else {
       filteredNews.assignAll(
         storiesDetails.values.where((story) =>
-            story.title.toLowerCase().contains(query.toLowerCase())).toList(),
+        story.title?.toLowerCase().contains(query.toLowerCase()) ?? false).toList(),
       );
     }
   }

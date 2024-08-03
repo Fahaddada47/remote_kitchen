@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 
 import '../model/news_model.dart';
+import '../controller/news_controller.dart';
 import '../widgets/custom_label.dart';
 import '../widgets/text_styles.dart';
 
@@ -13,6 +15,8 @@ class NewsDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final StoryController storyController = Get.find();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('News Details'),
@@ -30,15 +34,12 @@ class NewsDetailsPage extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.copy),
                     onPressed: () {
-                      Clipboard.setData(
-                          ClipboardData(text: newsItem.url));
+                      Clipboard.setData(ClipboardData(text: newsItem.url));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('URL copied to clipboard')),
+                        const SnackBar(content: Text('URL copied to clipboard')),
                       );
                     },
                   ),
-
                 ],
               ),
               ClipRRect(
@@ -68,12 +69,11 @@ class NewsDetailsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomLabel(
-                    labelText: "Comment: ",
+                    labelText: "Comments: ",
                     numberText: newsItem.kids.length.toString(),
                     labelStyle: getTextStyle(),
                     requiredIndicator: true,
@@ -89,10 +89,6 @@ class NewsDetailsPage extends StatelessWidget {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  const CircleAvatar(
-                    backgroundImage: AssetImage(
-                        'assets/author.png'),
-                  ),
                   const SizedBox(width: 8.0),
                   Text(
                     newsItem.by ?? 'Unknown Author',
@@ -106,8 +102,8 @@ class NewsDetailsPage extends StatelessWidget {
                   Text(
                     newsItem.time != null
                         ? DateFormat.yMMMd().add_jm().format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                newsItem.time! * 1000))
+                        DateTime.fromMillisecondsSinceEpoch(
+                            newsItem.time * 1000))
                         : 'No Date Available',
                   ),
                 ],
@@ -118,10 +114,52 @@ class NewsDetailsPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showCommentsBottomSheet(context, newsItem, storyController);
+                  },
+                  child: Text('Comments (${newsItem.kids.length})'),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void showCommentsBottomSheet(BuildContext context, Story story, StoryController storyController) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          builder: (context, scrollController) {
+            return Obx(() {
+              if (storyController.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return ListView.builder(
+                controller: scrollController,
+                itemCount: story.comments.length,
+                itemBuilder: (context, index) {
+                  final comment = story.comments[index];
+                  return ListTile(
+                    title: Text(comment.by ?? 'Unknown Author'),
+                    subtitle: Text(comment.text ?? 'No Comment Text'),
+                  );
+                },
+              );
+            });
+          },
+        );
+      },
+    );
+    if (story.comments.isEmpty) {
+      storyController.fetchComments(story);
+    }
   }
 }
