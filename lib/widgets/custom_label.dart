@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CustomLabel extends StatelessWidget {
+class CustomLabel extends StatefulWidget {
   final String labelText;
   final String numberText;
   final bool requiredIndicator;
   final TextStyle labelStyle;
   final TextStyle requiredIndicatorStyle;
 
-  var number;
 
    CustomLabel({
     Key? key,
@@ -23,16 +22,23 @@ class CustomLabel extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CustomLabel> createState() => _CustomLabelState();
+}
+
+class _CustomLabelState extends State<CustomLabel> {
+  var number;
+
+  @override
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        text: labelText,
-        style: labelStyle,
+        text: widget.labelText,
+        style: widget.labelStyle,
         children: [
-          if (requiredIndicator)
+          if (widget.requiredIndicator)
             TextSpan(
-              text: numberText,
-              style: requiredIndicatorStyle,
+              text: widget.numberText,
+              style: widget.requiredIndicatorStyle,
             ),
         ],
       ),

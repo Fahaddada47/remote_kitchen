@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:remote_kitchen/application/state_holder_binder.dart';
 
-import '../news/news_page.dart';
+import '../presentation/screens/news_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             fixedSize: const Size(350, 48),
             // backgroundColor: const Color(0xff5D5CFF),
-            backgroundColor:  Colors.lightBlue,
+            backgroundColor: Colors.lightBlue,
             padding: const EdgeInsets.symmetric(vertical: 10),
             elevation: 3,
             shape: RoundedRectangleBorder(
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-       home: NewsPage(),
+      home: NewsPage(),
+      initialBinding: StateHolderBinder(),
     );
   }
 }

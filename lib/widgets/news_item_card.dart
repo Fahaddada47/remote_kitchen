@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:remote_kitchen/widgets/custom_label.dart';
 import 'package:remote_kitchen/widgets/text_styles.dart';
-
-import '../controller/news_controller.dart';
-import '../model/news_model.dart';
-import '../news/news_details_page.dart';
+import '../data/model/news_model.dart';
+import '../presentation/screens/news_details_page.dart';
 
 class NewsItemCard extends StatelessWidget {
   final Story newsItem;
@@ -15,10 +13,6 @@ class NewsItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final StoryController storyController = Get.find();
-
-
-
     return Card(
       margin: const EdgeInsets.all(8.0),
       child: Column(
@@ -37,7 +31,7 @@ class NewsItemCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        width: 100,
+                        width: 97,
                         height: 100,
                         color: Colors.grey[200],
                         child: const Icon(Icons.error, color: Colors.red),
@@ -63,9 +57,7 @@ class NewsItemCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              (newsItem.text != null && newsItem.text!.length > 30)
-                                  ? '${newsItem.text!.substring(0, 30)}...'
-                                  : newsItem.text ?? 'No Description',
+                              newsItem.text.isNotEmpty ? newsItem.text : 'No Description',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "Lato",
@@ -91,26 +83,22 @@ class NewsItemCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
+                      Text(
+                        DateFormat.yMMMd()
+                            .add_jm()
+                            .format(DateTime.fromMillisecondsSinceEpoch(newsItem.time * 1000)),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            DateFormat.yMMMd()
-                                .add_jm()
-                                .format(DateTime.fromMillisecondsSinceEpoch(newsItem.time * 1000)),
-                          ),
                           CustomLabel(labelText: "Comment: ", numberText: newsItem.kids.length.toString(),
-                          labelStyle: getTextStyle(),
-                          requiredIndicator: true,),
+                            labelStyle: getTextStyle(),
+                            requiredIndicator: true,),
                           CustomLabel(labelText: "Upvote: ", numberText: newsItem.score.toString(),
-                          labelStyle: getTextStyle(),
-                          requiredIndicator: true,),
-
-
-
+                            labelStyle: getTextStyle(),
+                            requiredIndicator: true,),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),

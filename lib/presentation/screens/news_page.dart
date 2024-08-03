@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:typewritertext/typewritertext.dart';
+
+import '../../controller/news_controller.dart';
 import '../../widgets/news_item_card.dart';
-import '../controller/news_controller.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});
@@ -11,7 +13,20 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  final StoryController storyController = Get.put(StoryController());
+  final StoryController storyController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      storyController.fetchTopStories();
+    });
+  }
+
+  Future<void> _refreshStoryList() async {
+    await storyController.fetchTopStories(forceRefresh: true);
+  }
+
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 
@@ -19,16 +34,24 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: Padding(
-            padding: const EdgeInsets.only(bottom: 7.0),
+            padding: EdgeInsets.symmetric(
+              vertical: screenWidth * 0.02,
+            ),
             child: TextField(
               controller: searchController,
               focusNode: searchFocusNode,
               decoration: InputDecoration(
-                hintText: 'Search News...',
+                label: TypeWriter.text(
+                  "Search News Title",
+                  duration: const Duration(milliseconds: 200),
+                  repeat: true,
+                ),
                 prefixIcon: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Icon(Icons.search),
@@ -45,14 +68,12 @@ class _NewsPageState extends State<NewsPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: screenWidth * 0.02,
+                ),
               ),
               onChanged: (value) {
-                if (value.isEmpty) {
-                  isSearching.value = false;
-                } else {
-                  isSearching.value = true;
-                }
+                isSearching.value = value.isNotEmpty;
                 storyController.searchNews(value);
               },
               onTap: () {
@@ -63,23 +84,28 @@ class _NewsPageState extends State<NewsPage> {
           centerTitle: true,
         ),
         body: Obx(() {
+        //  print("Loading state: ${storyController.isLoading.value}");
+         // print("Filtered news: ${storyController.filteredNews}");
           if (storyController.isLoading.value) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(),
+                padding: EdgeInsets.all(screenWidth * 0.02),
+                child: const CircularProgressIndicator(),
               ),
             );
           }
           if (storyController.filteredNews.isEmpty) {
-            return Center(child: Text('No news found.'));
+            return const Center(child: Text('No news found.'));
           }
-          return ListView.builder(
-            itemCount: storyController.filteredNews.length,
-            itemBuilder: (context, index) {
-              final newsItem = storyController.filteredNews[index];
-              return NewsItemCard(newsItem: newsItem);
-            },
+          return RefreshIndicator(
+            onRefresh: _refreshStoryList,
+            child: ListView.builder(
+              itemCount: storyController.filteredNews.length,
+              itemBuilder: (context, index) {
+                final newsItem = storyController.filteredNews[index];
+                return NewsItemCard(newsItem: newsItem);
+              },
+            ),
           );
         }),
       ),
