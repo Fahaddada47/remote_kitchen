@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:remote_kitchen/application/state_holder_binder.dart';
 
 import '../news/news_page.dart';
 
@@ -27,6 +28,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
        home: NewsPage(),
+      initialBinding: StateHolderBinder(),
+
     );
   }
 }

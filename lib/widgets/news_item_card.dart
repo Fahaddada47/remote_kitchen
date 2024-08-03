@@ -15,10 +15,6 @@ class NewsItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final StoryController storyController = Get.find();
-
-
-
     return Card(
       margin: const EdgeInsets.all(8.0),
       child: Column(
@@ -37,7 +33,7 @@ class NewsItemCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        width: 100,
+                        width: 97,
                         height: 100,
                         color: Colors.grey[200],
                         child: const Icon(Icons.error, color: Colors.red),

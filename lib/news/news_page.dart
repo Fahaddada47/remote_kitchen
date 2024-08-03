@@ -11,7 +11,7 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  final StoryController storyController = Get.put(StoryController());
+  final StoryController storyController = Get.find();
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 

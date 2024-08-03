@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class Story {
   final dynamic by;
   final dynamic id;
@@ -9,8 +11,7 @@ class Story {
   final dynamic type;
   final dynamic url;
   final dynamic score;
-
-  final List<Story> comments;
+  final RxList<Story> comments;
 
   Story({
     required this.by,
@@ -23,14 +24,14 @@ class Story {
     required this.time,
     required this.type,
     required this.url,
-    this.comments = const [],
+    required this.comments,
   });
 
   factory Story.fromJson(Map<String, dynamic> json) {
     return Story(
-      by: json['by'],
-      score: json['score'],
-      id: json['id'],
+      by: json['by'] ?? 'Unknown Author',
+      score: json['score'] ?? 0,
+      id: json['id'] ?? 0,
       kids: List<int>.from(json['kids'] ?? []),
       descendants: json['descendants'] ?? 0,
       text: json['text'] ?? '',
@@ -38,7 +39,7 @@ class Story {
       time: json['time'] ?? 0,
       type: json['type'] ?? '',
       url: json['url'] ?? '',
-      comments: [],
+      comments: <Story>[].obs, // Initialize as RxList
     );
   }
 }
