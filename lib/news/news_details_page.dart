@@ -2,17 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:remote_kitchen/widgets/comments_tile.dart';
 import '../model/news_model.dart';
 import '../controller/news_controller.dart';
 
-class NewsDetailsPage extends StatelessWidget {
+class NewsDetailsPage extends StatefulWidget {
   final Story newsItem;
 
   NewsDetailsPage({required this.newsItem});
 
   @override
+  State<NewsDetailsPage> createState() => _NewsDetailsPageState();
+}
+
+class _NewsDetailsPageState extends State<NewsDetailsPage> {
+
+
+
+  @override
   Widget build(BuildContext context) {
     final StoryController storyController = Get.find();
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -20,18 +30,18 @@ class NewsDetailsPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: EdgeInsets.all(screenWidth * 0.03),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(newsItem.url.isNotEmpty ? newsItem.url : 'No URL provided')),
+                  Expanded(child: Text(widget.newsItem.url.isNotEmpty ? widget.newsItem.url : 'No URL provided')),
                   IconButton(
                     icon: const Icon(Icons.copy),
                     onPressed: () {
-                      Clipboard.setData(ClipboardData(text: newsItem.url));
+                      Clipboard.setData(ClipboardData(text: widget.newsItem.url));
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('URL copied to clipboard')),
                       );
@@ -39,35 +49,36 @@ class NewsDetailsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: screenWidth * 0.03),
               Text(
-                newsItem.title.isNotEmpty ? newsItem.title : 'No Title',
-                style: const TextStyle(
-                  fontSize: 20,
+                widget.newsItem.title.isNotEmpty ? widget.newsItem.title : 'No Title',
+                style: TextStyle(
+                  fontSize: screenWidth * 0.05,
                   fontWeight: FontWeight.w700,
                   fontFamily: "Roboto",
                 ),
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: screenWidth * 0.02),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Comments: ${newsItem.kids.length}",
+                    "Comments: ${widget.newsItem.kids.length}",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Upvotes: ${newsItem.descendants}",
+                    "Upvotes: ${widget.newsItem.descendants}",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: screenWidth * 0.05),
               Row(
                 children: [
-                  const SizedBox(width: 8.0),
+                  SizedBox(width: screenWidth * 0.01),
+                  const Text("Author: "),
                   Text(
-                    newsItem.by.isNotEmpty ? newsItem.by : 'Unknown Author',
+                    widget.newsItem.by.isNotEmpty ? widget.newsItem.by : 'Unknown Author',
                     style: const TextStyle(
                       fontFamily: "Lato",
                       fontSize: 12,
@@ -76,25 +87,27 @@ class NewsDetailsPage extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    newsItem.time != 0
+                    widget.newsItem.time != 0
                         ? DateFormat.yMMMd().add_jm().format(
                         DateTime.fromMillisecondsSinceEpoch(
-                            newsItem.time * 1000))
+                            widget.newsItem.time * 1000))
                         : 'No Date Available',
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: screenWidth * 0.03),
               Text(
-                newsItem.text.isNotEmpty ? newsItem.text : 'No Description',
-                style: const TextStyle(fontSize: 16),
+                widget.newsItem.text.isNotEmpty ? widget.newsItem.text : 'No Description',
+                style: TextStyle(fontSize: screenWidth * 0.04),
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  showCommentsBottomSheet(context, newsItem, storyController);
-                },
-                child: Text('Comments (${newsItem.kids.length})'),
+              SizedBox(height: screenWidth * 0.03),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showCommentsBottomSheet(context, widget.newsItem, storyController);
+                  },
+                  child: Text('Comments (${widget.newsItem.kids.length})'),
+                ),
               ),
             ],
           ),
@@ -121,7 +134,7 @@ class NewsDetailsPage extends StatelessWidget {
                 itemCount: story.comments.length,
                 itemBuilder: (context, index) {
                   final comment = story.comments[index];
-                  return MainCommentTile(comment: comment, depth: 0);
+                  return CommentsTile(comment: comment, depth: 0);
                 },
               );
             });
@@ -136,109 +149,5 @@ class NewsDetailsPage extends StatelessWidget {
   }
 }
 
-class MainCommentTile extends StatefulWidget {
-  final Story comment;
-  final int depth;
 
-  const MainCommentTile({required this.comment, required this.depth});
 
-  @override
-  _MainCommentTileState createState() => _MainCommentTileState();
-}
-
-class _MainCommentTileState extends State<MainCommentTile> {
-  bool showReplies = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(8),
-          border: Border(
-            left: BorderSide(
-              color: Colors.grey[400]!,
-              width: 3 + widget.depth.toDouble(), // Indentation based on depth
-            ),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Colors.grey[300],
-                  child: Text(
-                    widget.comment.by.isNotEmpty ? widget.comment.by[0].toUpperCase() : 'A',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  widget.comment.by,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  DateFormat.yMMMd().add_jm().format(
-                      DateTime.fromMillisecondsSinceEpoch(widget.comment.time * 1000)),
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(widget.comment.text),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.thumb_up_alt_outlined, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text('${widget.comment.descendants}', style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                InkWell(
-                  onTap: () {
-                    // handle reply action
-                  },
-                  child: const Text('Reply', style: TextStyle(color: Colors.blue)),
-                ),
-              ],
-            ),
-            if (widget.comment.comments.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      showReplies = !showReplies;
-                    });
-                  },
-                  child: Text(
-                    showReplies ? 'Hide replies' : 'View more replies (${widget.comment.comments.length})',
-                    style: const TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ),
-            if (showReplies)
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Column(
-                  children: widget.comment.comments
-                      .map((reply) => MainCommentTile(comment: reply, depth: widget.depth + 1))
-                      .toList(),
-                ),
-              ),
-          ],
-        ),
-      );
-    });
-  }
-}

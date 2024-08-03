@@ -18,15 +18,19 @@ class StoryController extends GetxController {
     super.onInit();
   }
 
-  void fetchTopStories() async {
+  Future<void> fetchTopStories({ bool forceRefresh = false}) async {
     isLoading(true);
-    final stories = await repository.fetchTopStories();
-    if (stories != null) {
-      topStories.assignAll(stories);
-      fetchAllStoryDetails(stories);
+    try {
+      final stories = await repository.fetchTopStories();
+      if (stories != null) {
+        topStories.assignAll(stories);
+        fetchAllStoryDetails(stories);
+      }
+    } finally {
+      isLoading(false);
     }
-    isLoading(false);
   }
+
 
   void fetchAllStoryDetails(List<int> storyIds) async {
     for (var id in storyIds) {

@@ -59,9 +59,7 @@ class NewsItemCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              (newsItem.text != null && newsItem.text!.length > 30)
-                                  ? '${newsItem.text!.substring(0, 30)}...'
-                                  : newsItem.text ?? 'No Description',
+                              newsItem.text.isNotEmpty ? newsItem.text : 'No Description',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "Lato",
@@ -87,26 +85,22 @@ class NewsItemCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
+                      Text(
+                        DateFormat.yMMMd()
+                            .add_jm()
+                            .format(DateTime.fromMillisecondsSinceEpoch(newsItem.time * 1000)),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            DateFormat.yMMMd()
-                                .add_jm()
-                                .format(DateTime.fromMillisecondsSinceEpoch(newsItem.time * 1000)),
-                          ),
                           CustomLabel(labelText: "Comment: ", numberText: newsItem.kids.length.toString(),
-                          labelStyle: getTextStyle(),
-                          requiredIndicator: true,),
+                            labelStyle: getTextStyle(),
+                            requiredIndicator: true,),
                           CustomLabel(labelText: "Upvote: ", numberText: newsItem.score.toString(),
-                          labelStyle: getTextStyle(),
-                          requiredIndicator: true,),
-
-
-
+                            labelStyle: getTextStyle(),
+                            requiredIndicator: true,),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),
