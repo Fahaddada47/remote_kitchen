@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:remote_kitchen/api_service/network_response.dart';
+
+import '../../data/model/network_response.dart';
+
 
 class NetworkCaller {
   /// GET request method

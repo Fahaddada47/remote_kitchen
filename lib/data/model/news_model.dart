@@ -39,7 +39,7 @@ class Story {
       time: json['time'] ?? 0,
       type: json['type'] ?? '',
       url: json['url'] ?? '',
-      comments: <Story>[].obs, // Initialize as RxList
+      comments: <Story>[].obs,
     );
   }
 }

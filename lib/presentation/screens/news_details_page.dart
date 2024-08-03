@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:remote_kitchen/widgets/comments_tile.dart';
-import '../model/news_model.dart';
-import '../controller/news_controller.dart';
+
+import '../../controller/news_controller.dart';
+import '../../data/model/news_model.dart';
 
 class NewsDetailsPage extends StatefulWidget {
   final Story newsItem;
@@ -16,9 +17,6 @@ class NewsDetailsPage extends StatefulWidget {
 }
 
 class _NewsDetailsPageState extends State<NewsDetailsPage> {
-
-
-
   @override
   Widget build(BuildContext context) {
     final StoryController storyController = Get.find();
@@ -37,13 +35,18 @@ class _NewsDetailsPageState extends State<NewsDetailsPage> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(widget.newsItem.url.isNotEmpty ? widget.newsItem.url : 'No URL provided')),
+                  Expanded(
+                      child: Text(widget.newsItem.url.isNotEmpty
+                          ? widget.newsItem.url
+                          : 'No URL provided')),
                   IconButton(
                     icon: const Icon(Icons.copy),
                     onPressed: () {
-                      Clipboard.setData(ClipboardData(text: widget.newsItem.url));
+                      Clipboard.setData(
+                          ClipboardData(text: widget.newsItem.url));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('URL copied to clipboard')),
+                        const SnackBar(
+                            content: Text('URL copied to clipboard')),
                       );
                     },
                   ),
@@ -51,7 +54,9 @@ class _NewsDetailsPageState extends State<NewsDetailsPage> {
               ),
               SizedBox(height: screenWidth * 0.03),
               Text(
-                widget.newsItem.title.isNotEmpty ? widget.newsItem.title : 'No Title',
+                widget.newsItem.title.isNotEmpty
+                    ? widget.newsItem.title
+                    : 'No Title',
                 style: TextStyle(
                   fontSize: screenWidth * 0.05,
                   fontWeight: FontWeight.w700,
@@ -78,7 +83,9 @@ class _NewsDetailsPageState extends State<NewsDetailsPage> {
                   SizedBox(width: screenWidth * 0.01),
                   const Text("Author: "),
                   Text(
-                    widget.newsItem.by.isNotEmpty ? widget.newsItem.by : 'Unknown Author',
+                    widget.newsItem.by.isNotEmpty
+                        ? widget.newsItem.by
+                        : 'Unknown Author',
                     style: const TextStyle(
                       fontFamily: "Lato",
                       fontSize: 12,
@@ -89,22 +96,25 @@ class _NewsDetailsPageState extends State<NewsDetailsPage> {
                   Text(
                     widget.newsItem.time != 0
                         ? DateFormat.yMMMd().add_jm().format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            widget.newsItem.time * 1000))
+                            DateTime.fromMillisecondsSinceEpoch(
+                                widget.newsItem.time * 1000))
                         : 'No Date Available',
                   ),
                 ],
               ),
               SizedBox(height: screenWidth * 0.03),
               Text(
-                widget.newsItem.text.isNotEmpty ? widget.newsItem.text : 'No Description',
+                widget.newsItem.text.isNotEmpty
+                    ? widget.newsItem.text
+                    : 'No Description',
                 style: TextStyle(fontSize: screenWidth * 0.04),
               ),
               SizedBox(height: screenWidth * 0.03),
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    showCommentsBottomSheet(context, widget.newsItem, storyController);
+                    showCommentsBottomSheet(
+                        context, widget.newsItem, storyController);
                   },
                   child: Text('Comments (${widget.newsItem.kids.length})'),
                 ),
@@ -116,7 +126,8 @@ class _NewsDetailsPageState extends State<NewsDetailsPage> {
     );
   }
 
-  void showCommentsBottomSheet(BuildContext context, Story story, StoryController storyController) {
+  void showCommentsBottomSheet(
+      BuildContext context, Story story, StoryController storyController) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -148,6 +159,3 @@ class _NewsDetailsPageState extends State<NewsDetailsPage> {
     }
   }
 }
-
-
-

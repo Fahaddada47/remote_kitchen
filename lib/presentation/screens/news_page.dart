@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:typewritertext/typewritertext.dart';
+
+import '../../controller/news_controller.dart';
 import '../../widgets/news_item_card.dart';
-import '../controller/news_controller.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});
@@ -25,7 +27,6 @@ class _NewsPageState extends State<NewsPage> {
     await storyController.fetchTopStories(forceRefresh: true);
   }
 
-
   final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 
@@ -46,7 +47,11 @@ class _NewsPageState extends State<NewsPage> {
               controller: searchController,
               focusNode: searchFocusNode,
               decoration: InputDecoration(
-                hintText: 'Search News...',
+                label: TypeWriter.text(
+                  "Search News Title",
+                  duration: const Duration(milliseconds: 200),
+                  repeat: true,
+                ),
                 prefixIcon: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Icon(Icons.search),
@@ -79,16 +84,18 @@ class _NewsPageState extends State<NewsPage> {
           centerTitle: true,
         ),
         body: Obx(() {
+        //  print("Loading state: ${storyController.isLoading.value}");
+         // print("Filtered news: ${storyController.filteredNews}");
           if (storyController.isLoading.value) {
             return Center(
               child: Padding(
                 padding: EdgeInsets.all(screenWidth * 0.02),
-                child: CircularProgressIndicator(),
+                child: const CircularProgressIndicator(),
               ),
             );
           }
           if (storyController.filteredNews.isEmpty) {
-            return Center(child: Text('No news found.'));
+            return const Center(child: Text('No news found.'));
           }
           return RefreshIndicator(
             onRefresh: _refreshStoryList,

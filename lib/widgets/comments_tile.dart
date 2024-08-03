@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../model/news_model.dart';
+import '../data/model/news_model.dart';
 
 class CommentsTile extends StatefulWidget {
   final Story comment;
@@ -26,7 +26,8 @@ class _CommentsTileState extends State<CommentsTile> {
 
     return Obx(() {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: padding, horizontal: padding * 1.5),
+        padding:
+            EdgeInsets.symmetric(vertical: padding, horizontal: padding * 1.5),
         margin: EdgeInsets.symmetric(vertical: padding / 2),
         decoration: BoxDecoration(
           color: Colors.grey[100],
@@ -34,7 +35,7 @@ class _CommentsTileState extends State<CommentsTile> {
           border: Border(
             left: BorderSide(
               color: Colors.grey[400]!,
-              width: 3 + widget.depth.toDouble(), // Indentation based on depth
+              width: 3 + widget.depth.toDouble(),
             ),
           ),
         ),
@@ -47,8 +48,11 @@ class _CommentsTileState extends State<CommentsTile> {
                   radius: avatarRadius,
                   backgroundColor: Colors.grey[300],
                   child: Text(
-                    widget.comment.by.isNotEmpty ? widget.comment.by[0].toUpperCase() : 'A',
-                    style: TextStyle(color: Colors.white, fontSize: fontSize * 0.5),
+                    widget.comment.by.isNotEmpty
+                        ? widget.comment.by[0].toUpperCase()
+                        : 'A',
+                    style: TextStyle(
+                        color: Colors.white, fontSize: fontSize * 0.5),
                   ),
                 ),
                 SizedBox(width: padding * 0.5),
@@ -67,8 +71,10 @@ class _CommentsTileState extends State<CommentsTile> {
                       SizedBox(height: padding / 2),
                       Text(
                         DateFormat.yMMMd().add_jm().format(
-                            DateTime.fromMillisecondsSinceEpoch(widget.comment.time * 1000)),
-                        style: TextStyle(color: Colors.grey, fontSize: fontSize * 0.8),
+                            DateTime.fromMillisecondsSinceEpoch(
+                                widget.comment.time * 1000)),
+                        style: TextStyle(
+                            color: Colors.grey, fontSize: fontSize * 0.8),
                       ),
                     ],
                   ),
@@ -86,11 +92,13 @@ class _CommentsTileState extends State<CommentsTile> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.thumb_up_alt_outlined, size: fontSize * 0.8, color: Colors.grey),
+                    Icon(Icons.thumb_up_alt_outlined,
+                        size: fontSize * 0.8, color: Colors.grey),
                     SizedBox(width: padding * 0.5),
                     Text(
                       '${widget.comment.descendants}',
-                      style: TextStyle(color: Colors.grey, fontSize: fontSize * 0.8),
+                      style: TextStyle(
+                          color: Colors.grey, fontSize: fontSize * 0.8),
                     ),
                   ],
                 ),
@@ -100,7 +108,8 @@ class _CommentsTileState extends State<CommentsTile> {
                   },
                   child: Text(
                     'Reply',
-                    style: TextStyle(color: Colors.blue, fontSize: fontSize * 0.8),
+                    style:
+                        TextStyle(color: Colors.blue, fontSize: fontSize * 0.8),
                   ),
                 ),
               ],
@@ -115,8 +124,11 @@ class _CommentsTileState extends State<CommentsTile> {
                     });
                   },
                   child: Text(
-                    showReplies ? 'Hide replies' : 'View more replies (${widget.comment.comments.length})',
-                    style: TextStyle(color: Colors.blue, fontSize: fontSize * 0.8),
+                    showReplies
+                        ? 'Hide replies'
+                        : 'View more replies (${widget.comment.comments.length})',
+                    style:
+                        TextStyle(color: Colors.blue, fontSize: fontSize * 0.8),
                   ),
                 ),
               ),
@@ -125,7 +137,8 @@ class _CommentsTileState extends State<CommentsTile> {
                 padding: EdgeInsets.only(left: padding),
                 child: Column(
                   children: widget.comment.comments
-                      .map((reply) => CommentsTile(comment: reply, depth: widget.depth + 1))
+                      .map((reply) =>
+                          CommentsTile(comment: reply, depth: widget.depth + 1))
                       .toList(),
                 ),
               ),

@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:remote_kitchen/widgets/custom_label.dart';
 import 'package:remote_kitchen/widgets/text_styles.dart';
-
-import '../controller/news_controller.dart';
-import '../model/news_model.dart';
-import '../news/news_details_page.dart';
+import '../data/model/news_model.dart';
+import '../presentation/screens/news_details_page.dart';
 
 class NewsItemCard extends StatelessWidget {
   final Story newsItem;

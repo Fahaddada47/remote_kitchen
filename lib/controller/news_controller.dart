@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
-import '../model/news_repository.dart';
-import '../model/news_model.dart';
+
+import '../data/model/news_model.dart';
+import '../domain/repository/news_repository.dart';
 
 class StoryController extends GetxController {
   final StoryRepository repository;
@@ -22,19 +23,23 @@ class StoryController extends GetxController {
     isLoading(true);
     try {
       final stories = await repository.fetchTopStories();
-      if (stories != null) {
+     // print("Fetched top stories: $stories");
+      if (stories != null && stories.isNotEmpty) {
         topStories.assignAll(stories);
         fetchAllStoryDetails(stories);
+      } else {
+        topStories.clear();
+        filteredNews.clear();
       }
     } finally {
       isLoading(false);
     }
   }
 
-
   void fetchAllStoryDetails(List<int> storyIds) async {
     for (var id in storyIds) {
       final story = await repository.fetchStoryDetails(id);
+     // print("Fetched story details for ID $id: $story");
       if (story != null) {
         storiesDetails[id] = story;
         filteredNews.add(story);
@@ -47,7 +52,7 @@ class StoryController extends GetxController {
       final comment = await repository.fetchStoryDetails(commentId);
       if (comment != null) {
         story.comments.add(comment);
-        await fetchComments(comment); // Recursively fetch nested comments
+        await fetchComments(comment);
       }
     }
   }
