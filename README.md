@@ -15,5 +15,5 @@ Download this APk from this https://drive.google.com/file/d/1mOMRY50hmnijWhNVo6S
 and install on your device
 ## Video Demo
 demo Video Installation
-https://github.com/user-attachments/assets/7c751de1-f764-46cb-bfdf-f0d3d239ebc6
+https://github.com/user-attachments/assets/ff63a284-6594-4a79-9dbc-13936840c55a
 
